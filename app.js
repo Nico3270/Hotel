@@ -81,7 +81,6 @@ app.post("/formulario", (req, res) => {
       const query = 'INSERT INTO formulario (tipo, numero, expedicion, nombres, apellidos, celular, correo, residencia, procedencia, ocupacion, acompanantes, habitacion, tarifa, llegada, salida) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)';
       const values = [tipos, numero, expedicion, nombres, apellidos, celular, correo, residencia, procedencia, ocupacion, acompanantes, habitacion, tarifa, llegada, salida];
       await pool.query(query, values);
-  
       console.log('Datos guardados en la base de datos');
       res.redirect("/registrado");
     } catch (err) {
