@@ -1,42 +1,83 @@
-const express = require("express");
+const mongoose = require('mongoose');
+const express = require('express');
+const bodyParser = require('body-parser');
+const moment = require('moment');
 const app = express();
-const bodyParser = require("body-parser");
+
+// Configuración del middleware body-parser para manejar datos del formulario
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
-
-const axios = require('axios');
-
-const { Pool } = require('pg');
-
-
-// Configura la conexión a la base de datos PostgreSQL
-const pool = new Pool({
-  user: 'gytufqewbdqrkw',
-  host: 'ec2-3-93-160-246.compute-1.amazonaws.com',
-  database: 'dd7etdmho61238',
-  password: 'd017e776a3c68c3a4988f0d525aa2c8eec2cfe104f576a0b750b8129fc78f9ee',
-  port: 5432, // El puerto por defecto de PostgreSQL es 5432
-});
-
 
 
 app.use(express.static("public"));
 app.use(express.static(__dirname));
+// Conectar a la base de datos de MongoDB
+mongoose.connect('mongodb+srv://cristiannicolasrodriguez3270:Nico96@cluster0.8c8mcxn.mongodb.net/clientesDanarama?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Conexión exitosa a la base de datos'))
+  .catch((err) => console.error('Error de conexión a la base de datos', err));
 
-
-app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/index.html");
+// Crear un esquema de datos para el formulario
+const formularioSchema = new mongoose.Schema({
+  tipo: String,
+  numero: Number,
+  expedicion: String,
+  nombres: String,
+  apellidos: String,
+  celular: String,
+  correo: String,
+  residencia: String,
+  procedencia: String,
+  ocupacion: String,
+  acompanantes: Number,
+  habitacion: String,
+  tarifa: String,
+  llegada: String,
+  salida: String,
 });
 
-// app.get("/registrado", (req,res) => {
-//   res.sendFile(__dirname + "/public/exito.html")
-// })
+// Crear un modelo para el formulario
+const Formulario = mongoose.model('Formulario', formularioSchema);
 
+// Guardar los datos del formulario utilizando el modelo de formulario
+app.post("/formulario", (req, res) => {
+  const formulario = new Formulario({
+    tipo: req.body.tipo,
+    numero: req.body.numero,
+    expedicion: req.body.city,
+    nombres: req.body.nombres,
+    apellidos: req.body.apellidos,
+    celular: req.body.celular,
+    correo: req.body.correo,
+    residencia: req.body.home,
+    procedencia: req.body.ciudad,
+    ocupacion: req.body.ocupacion,
+    acompanantes: req.body.acompanantes,
+    habitacion: req.body.habitacion,
+    tarifa: req.body.tarifa,
+    llegada: moment(req.body.llegada).format('DD/MM/YYYY'),
+    salida: moment(req.body.salida).format('DD/MM/YYYY'),
+  });
+  formulario.save()
+    .then(() => {
+      console.log('Datos guardados en la base de datos');
+      res.redirect("/registrado");
+    })
+    .catch((err) => {
+      console.error('Error al guardar los datos en la base de datos', err);
+      res.status(500).send({
+        message: 'Error al guardar los datos en la base de datos',
+        error: err
+      });
+    })
+    .finally(() => {
+      console.log("Bien");
+    });
+});
 
+//En esta ruta se muestran los datos del ultimo cliente ingresado
 app.get('/registrado', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM formulario ORDER BY id DESC LIMIT 1');
-    const datos = result.rows[0]; // El primer (y único) registro del resultado
+    const datos = await Formulario.findOne().sort({ $natural: -1 });
     console.log(datos);
     res.render('exito', { datos });
   } catch (error) {
@@ -45,10 +86,11 @@ app.get('/registrado', async (req, res) => {
   }
 });
 
+
 app.get('/clientes', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM formulario ORDER BY id DESC LIMIT 20');
-    const datosClientes = result.rows;
+    const result = await Formulario.find().sort({ _id: -1 }).limit(20);
+    const datosClientes = result;
     console.log(datosClientes);
     res.render('clientes', { datosClientes });
   } catch (error) {
@@ -57,55 +99,14 @@ app.get('/clientes', async (req, res) => {
   }
 });
 
-
-
-
-app.post("/formulario", (req, res) => {
-  async function guardarDatos() {
-    try {
-      // Obtiene los datos del formulario
-      var tipos = req.body.tipo;
-      var numero = req.body.numero;
-      var expedicion = req.body.city;
-      var nombres = req.body.nombres;
-      var apellidos = req.body.apellidos;
-      var celular = req.body.celular;
-      var correo = req.body.correo;
-      var residencia = req.body.home;
-      var procedencia = req.body.ciudad;
-      var ocupacion = req.body.ocupacion;
-      var acompanantes = req.body.acompanantes;
-      var habitacion = req.body.habitacion;
-      var tarifa = req.body.tarifa;
-      var llegada = req.body.llegada;
-      var salida = req.body.salida;
-  
-      // Inserta los datos en la base de datos
-      const query = 'INSERT INTO formulario (tipo, numero, expedicion, nombres, apellidos, celular, correo, residencia, procedencia, ocupacion, acompanantes, habitacion, tarifa, llegada, salida) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)';
-      const values = [tipos, numero, expedicion, nombres, apellidos, celular, correo, residencia, procedencia, ocupacion, acompanantes, habitacion, tarifa, llegada, salida];
-      await pool.query(query, values);
-      console.log('Datos guardados en la base de datos');
-      res.redirect("/registrado");
-    } catch (err) {
-      console.error('Error al guardar los datos en la base de datos', err);
-    } finally {
-      // Libera la conexión a la base de datos
-      console.log("Bien");
-    }
-  }
-  guardarDatos();
-  
-    
-  });
-
-let port = process.env.PORT;
-
-if (port == null || port == ""){
-  port = 3000;
-}
-
-app.listen(port, () => {
-    console.log("Servidor inicializado en el puerto 3000");
+// Ruta inicial del proyecto
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/public/index.html");
 });
 
 
+
+// Iniciar el servidor
+app.listen(3000, () => {
+  console.log('Servidor iniciado en el puerto 3000');
+});
