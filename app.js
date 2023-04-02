@@ -3,7 +3,7 @@ const app = express();
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
-const port = 3000;
+
 const axios = require('axios');
 
 const { Pool } = require('pg');
@@ -94,6 +94,12 @@ app.post("/formulario", (req, res) => {
   
     
   });
+
+let port = process.env.PORT;
+
+if (port == null || port == ""){
+  port = 3000;
+}
 
 app.listen(port, () => {
     console.log("Servidor inicializado en el puerto 3000");
