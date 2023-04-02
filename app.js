@@ -11,10 +11,10 @@ const { Pool } = require('pg');
 
 // Configura la conexión a la base de datos PostgreSQL
 const pool = new Pool({
-  user: 'vhbkhupxjdznfr',
-  host: 'ec2-3-208-74-199.compute-1.amazonaws.com', // corrigiendo el typo en el host
-  database: 'd48pfto3uh6n8s',
-  password: 'e330089513a1cc10efb7a5acf1c1255cf4b92e133e0fdd083ee6fd7e97808ebf',
+  user: 'postgres',
+  host: 'localhost',
+  database: 'hoteldanarama',
+  password: 'Nicolas3270',
   port: 5432, // El puerto por defecto de PostgreSQL es 5432
 });
 
@@ -56,6 +56,9 @@ app.get('/clientes', async (req, res) => {
     res.status(500).send('Error al obtener los registros');
   }
 });
+
+
+
 
 app.post("/formulario", (req, res) => {
   async function guardarDatos() {
