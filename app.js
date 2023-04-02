@@ -107,6 +107,12 @@ app.get("/", (req, res) => {
 
 
 // Iniciar el servidor
-app.listen(3000, () => {
-  console.log('Servidor iniciado en el puerto 3000');
+let port = process.env.PORT;
+
+if (port == null || port == ""){
+  port = 3000;
+}
+
+app.listen(port, () => {
+    console.log("Servidor inicializado en el puerto 3000");
 });
