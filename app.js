@@ -11,10 +11,10 @@ const { Pool } = require('pg');
 
 // Configura la conexión a la base de datos PostgreSQL
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'hoteldanarama',
-  password: 'Nicolas3270',
+  user: 'gytufqewbdqrkw',
+  host: 'ec2-3-93-160-246.compute-1.amazonaws.com',
+  database: 'dd7etdmho61238',
+  password: 'd017e776a3c68c3a4988f0d525aa2c8eec2cfe104f576a0b750b8129fc78f9ee',
   port: 5432, // El puerto por defecto de PostgreSQL es 5432
 });
 
