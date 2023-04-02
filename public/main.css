@@ -35,7 +35,7 @@ body {
 }
 
 .container-final {
-  width: 100%;
+  width: 90%;
 padding: 20px;
 justify-content: center;
 align-items: center;
@@ -69,4 +69,20 @@ h5 {
     text-align: center;
     color: #f77f00;
     text-decoration: solid;
+}
+
+th {
+  color: #f77f00;
+  justify-content: center;
+align-items: center;  
+}
+
+td.no-wrap {
+  white-space: nowrap;
+}
+
+h4 {
+  color: #003049;
+  text-align: center;
+  font-family: 'Trocchi', serif; 
 }
